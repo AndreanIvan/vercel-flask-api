@@ -164,21 +164,21 @@ def login():
     current_url = request.base_url 
 
     if not verify_signature(current_url, encrypted_req, client_id, timestamp, incoming_sign):
-        return jsonify({"code": 403, "msg": "Invalid Signature", "data": ""}), 403
+        return jsonify({"code": 403, "msg": "Signature tidak valid", "data": ""}), 403
 
     try:
         payload = decrypt_aes(encrypted_req, ENCRYPT_KEY_B64)
     except Exception as e:
-        return jsonify({"code": 400, "msg": "Decryption Failed", "data": ""}), 400
+        return jsonify({"code": 400, "msg": "Dekripsi gagal", "data": ""}), 400
 
     user = payload.get('user')
     password = payload.get('pass')
 
     response_data = {}
     if user not in MOCK_DB:
-        code, msg = 404, "User doesn't exist"
+        code, msg = 404, "Pengguna tidak ditemukan"
     elif MOCK_DB[user] != password:
-        code, msg = 401, "Wrong password"
+        code, msg = 401, "Kata sandi salah"
     else:
         code, msg = 200, "success"
         response_data = {"token": "dummy_jwt_token_12345", "userId": user}
